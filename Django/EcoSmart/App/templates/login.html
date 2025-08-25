@@ -5,11 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% load static %}
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
     <title>Document</title>
 </head>
 <body>
     {% include 'header.html'%}
 
-    <H1>Login</H1>
+    <main>
+
+        <H1>Login</H1>
+
+        <div class="caja-login">
+
+            <label for="">Usuario</label>
+            <input type="text">
+            <label for="">Contraseña</label>
+            <input type="password">
+            <input type="button" value="Registrase" class="boton">
+        </div>
+
+    </main>
+
+    {% include 'footer.html'%}
 </body>
 </html>
