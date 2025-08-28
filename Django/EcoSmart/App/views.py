@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.models import User
 
@@ -13,26 +13,44 @@ def home(request):
 
 def login(request):
     if request.method == 'POST':
-        print()
+        print('hola')
         username = request.POST.get('username')
         password = request.POST.get('password')
         
         user = authenticate(request, username = username, password = password)
         if user is not None:
-            return redirect('login')
+            return redirect('register')
+    else:
+        print('hola')
+    
     return render(request, 'auth/login.html')
 
+def registerPage(request):
+    return render(request, 'auth/register.html')
+
 def register(request):
-    register = RegisterForm(request.POST)
     if request.method == 'POST':
-        
-        if register.is_valid():
-            register.save
-            return render(request, 'home.html')
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            register_form.save()
+            return redirect('home')
         else:
-            print('no')   
-            errores = register.errors    
-            return render(request, 'auth/register.html',{'registerForm' : register, 'errores': errores})
+            errores = register_form.errors
+        
+            return render(request, 'auth/register.html', {
+                'registerForm': register_form,
+                'errores': errores
+                
+            })
+    else:
+        
+        register_form = RegisterForm()
+        return render(request, 'auth/register.html', {
+            'registerForm': register_form
+        })
+
+    
+        
 
 def header(request):
     return render(request, 'header.html')

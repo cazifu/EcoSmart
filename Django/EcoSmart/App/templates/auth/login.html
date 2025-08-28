@@ -16,14 +16,14 @@
 
         <H1>Login</H1>
 
-        <div class="caja-login">
+        <form class="caja-login" method="GET" action="{% url 'login' %}" >
 
-            <label for="">Usuario</label>
-            <input type="text">
+            <label for="username">Usuario</label>
+            <input type="text" name="username">
             <label for="">Contraseña</label>
-            <input type="password">
+            <input type="password" name="password">
             <input type="button" value="Registrase" class="boton">
-        </div>
+        </form>
 
     </main>
 

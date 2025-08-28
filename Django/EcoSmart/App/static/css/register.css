@@ -32,4 +32,15 @@ main{
     color: rgb(0, 0, 0);
     border-radius: 10px;
 }
+.error{
+    display: flex;
+    flex-direction: column;
+    color: white;
+    height: 200px;
+    width: 400px;
+}
+
+.errorlist{
+    margin: 0;
+}
 

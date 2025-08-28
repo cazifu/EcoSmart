@@ -18,28 +18,23 @@
 
         <form class="caja-register" method="POST" action="{% url 'register'%}">
             {% csrf_token %}
-    {% for campo in registerForm %}
-        <div>
-            <!-- Mostrar la etiqueta del campo -->
-            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label> <br>
-            <!-- Mostrar el campo de formulario -->
-            {{ campo }} <br>
-        </div>
-    {% endfor %}
-
-            {%for field,error in errores.items%}
-            <li> {{field}}:{{error}}</li>   
+                {% for campo in registerForm %}
+                    <div>
+                        <!-- Mostrar la etiqueta del campo -->
+                        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label> <br>
+                        <!-- Mostrar el campo de formulario -->
+                        {{ campo }} <br>
+                    </div>
+            {% endfor %}            {%for field,error in errores.items%}
+              {{field}}:{{error}} 
             {% endfor %}
-
-            <!--<label for="">Email</label>
-            <input type="email">
-            <label for="">Usuario</label>
-            <input type="text">
-            <label for="">Contraseña</label>
-            <input type="password">-->
             <input type="submit" value="Registrase" class="boton">
         </form>
-        
+
+        <div class="error">
+
+        </div>
+
 
     </main>
 
