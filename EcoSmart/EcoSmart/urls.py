@@ -26,10 +26,16 @@ urlpatterns = [
     #---------------------- Auth ----------------------#
     path('Register/',App.views.Register, name= 'Register'),
     path('Login/',App.views.Login, name= 'Login'),
+
+    #------------------- daashboard -------------------#
+    path('Dashboard/',App.views.Dashboard, name= 'Dashboard'),
+    path('Dashboard_view/',App.views.Dashboard_view, name= 'Dashboard_view'),
     
     #----------------- menu principal -----------------#
     path('Inicio/',App.views.Inicio, name= 'Inicio'),
     path('transacciones/',App.views.transacciones, name= 'transacciones'),
     path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
     
+    #----------------------planes-----------------------#
+    path('planes/crear_individual/', App.views.crear_plan_individual_view, name='crear_plan_individual'),
 ]

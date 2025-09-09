@@ -3,6 +3,11 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 
+from django.contrib.auth.decorators import login_required
+
+from .forms import PlanIndividualForm
+from .models import Plan
+
 from App.forms import RegisterForm
 
 
@@ -48,7 +53,7 @@ def Login(request):
 
         if user is not None:
             login(request, user)
-            return redirect("Inicio")  # O la página que quieras después de loguear
+            return redirect("Dashboard")  # O la página que quieras después de loguear
         else:
             messages.error(request, "Usuario o contraseña incorrectos")
             return render(request, "auth/login/login.html")
@@ -67,3 +72,37 @@ def transacciones(request):
 
 def Estadisticas(request):
     return render(request, 'menu_principal/Estadisticas.html')
+
+
+#--------------------dashboard---------------------#
+#                        |                         #
+#                        v                         #
+
+def Dashboard(request):
+    return render(request, 'Dashboard/index.html')
+
+
+def Dashboard_view(request):
+    # Obtiene todos los planes (individuales y grupales) a los que pertenece el usuario actual.
+    planes_del_usuario = Plan.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+
+    # Pasa la lista de planes a la plantilla HTML.
+    return render(request, 'dashboard/index.html', {'planes_del_usuario': planes_del_usuario})
+
+
+#--------------------- planes ---------------------#
+#                        |                         #
+#                        v                         #
+def crear_plan_individual_view(request):
+    if request.method == 'POST':
+        form = PlanIndividualForm(request.POST)
+        if form.is_valid():
+
+            # El formulario se encarga de asignar el usuario y el tipo de plan.
+            form.save(user=request.user)
+            messages.success(request, "¡Tu plan individual se ha creado con éxito!")
+            return redirect('Dashboard') # Redirige al dashboard
+    else:
+        form = PlanIndividualForm()
+    
+    return render(request, 'planes/crear_plan.html', {'form': form})
