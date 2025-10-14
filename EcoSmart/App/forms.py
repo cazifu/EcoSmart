@@ -1,35 +1,50 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-
-from .models import Plan
+from .models import Profile, Plan
 
 class RegisterForm(UserCreationForm):
-    
-    username = forms.CharField(label="Nombre de usuario")
-    email = forms.EmailField(label="Correo electrónico")
-    firstName = forms.CharField(label="Primer nombre")
-    lastName = forms.CharField(label="Apellido")
-    password1 = forms.CharField(label="Contraseña")
-    password2 = forms.CharField(label="Confirmar contraseña")
-    
+    email = forms.EmailField(required=True)
+    profile_picture = forms.ImageField(required=False)
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'firstName', 'lastName', 'password1', 'password2']
+        fields = ('username', 'email', 'password1', 'password2')
 
+class ProfileEditForm(UserChangeForm):
+    password = None
+    profile_picture = forms.ImageField(required=False)
 
-class PlanIndividualForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and hasattr(self.instance, 'profile'):
+            self.fields['profile_picture'].initial = self.instance.profile.profile_picture
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if commit:
+            profile, created = Profile.objects.get_or_create(user=user)
+            if self.cleaned_data.get('profile_picture'):
+                profile.profile_picture = self.cleaned_data['profile_picture']
+                profile.save()
+        return user
+
+class PasswordChangeFormCustom(PasswordChangeForm):
+    pass
+
+class PlanForm(forms.ModelForm):
     class Meta:
         model = Plan
-        # Solo necesitamos que el usuario ingrese el nombre del plan
-        fields = ['nombre']
-        
-    def save(self, user, commit=True):
-        # Esta función personaliza el guardado.
-        # Asigna el usuario actual y establece el tipo de plan como 'individual'.
-        plan = super().save(commit=False)
-        plan.usuario = user
-        plan.tipo_plan = 'individual'
-        if commit:
-            plan.save()
-        return plan
+        fields = ['nombre', 'tipo_plan']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Viaje a Europa 2025'}),
+            'tipo_plan': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+        }
+        labels = {
+            'nombre': 'Nombre del Plan',
+            'tipo_plan': 'Tipo de Plan',
+        }

@@ -1,119 +1,109 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard | EcoSmart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .dashboard-container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-        }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #7f8c8d;
-            margin-bottom: 30px;
-        }
-        .plan-options {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        .plan-options a {
-            padding: 15px 30px;
-            background-color: #1abc9c;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: background-color 0.3s;
-        }
-        .plan-options a:hover {
-            background-color: #16a085;
-        }
-        .plans-list {
-            text-align: left;
-            margin-top: 20px;
-        }
-        .plan-card {
-            background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            color: inherit;
-        }
-        .plan-card:hover {
-            background-color: #bdc3c7;
-        }
-        .plan-card h3 {
-            margin: 0;
-            color: #2c3e50;
-        }
-        .plan-card p {
-            margin: 0;
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-        .plan-card a {
-            text-decoration: none;
-            color: #2980b9;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSmart Finanzas - Dashboard</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1>¡Hola, {{ request.user.username }}!</h1>
-        <p>Selecciona un plan para gestionar tus finanzas y tareas, o crea uno nuevo.</p>
-
-        <div class="plan-options">
-            <a href="{% url 'crear_plan_individual' %}">Crear un Nuevo Plan</a>
-            <a href="">Unirse a un Plan Grupal</a>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">E</div>
+          <div class="logo-text">EcoSmart Finanzas</div>
         </div>
-        
-        <div class="plans-list">
-            <h2>Mis Planes</h2>
-            
-            {% if planes_del_usuario %}
-                {% for plan in planes_del_usuario %}
-                    <a href="" class="plan-card">
-                        <div>
-                            <h3>{{ plan.nombre }}</h3>
-                            <p>Tipo: {{ plan.tipo_plan|capfirst }}</p>
-                        </div>
-                        <div>
-                            <span>Gestionar</span>
-                        </div>
-                    </a>
-                {% endfor %}
-            {% else %}
-                <p>Todavía no tienes planes. ¡Crea uno para comenzar a organizarte!</p>
-            {% endif %}
-
+        <div class="user-info">
+          {% if request.user.profile.profile_picture %}
+            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+          {% else %}
+            <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+          {% endif %}
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">Cerrar Sesión</button>
+          </form>
         </div>
+      </div>
     </div>
+  </header>
+
+  <main class="container">
+    <!-- Bienvenida -->
+    <section class="welcome-section">
+      <h2>¡Hola, {{ request.user.username }}!</h2>
+      <p>Bienvenido de vuelta. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
+    </section>
+
+    <!-- Acciones principales -->
+    <div class="dashboard-grid" style="justify-content: center;">
+      <div class="card" style="max-width: 400px;">
+        <div class="card-header">
+          <div class="card-icon primary">
+            <span>+</span>
+          </div>
+          <h3 class="card-title">Crear un Nuevo Plan Financiero</h3>
+        </div>
+        <a href="{% url 'crear_plan' %}" class="btn btn-primary" style="display: inline-block; text-align: center; text-decoration: none;">Crear Plan</a>
+      </div>
+    </div>
+
+    <!-- Mis Planes -->
+    <h3 class="section-title">Mis Planes Financieros</h3>
+    <section class="plans-section" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+      {% for suscripcion in mis_planes %}
+        <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card" style="padding: 1rem; margin-bottom: 0;">
+          {% if suscripcion.plan.imagen %}
+            <img src="{{ suscripcion.plan.imagen.url }}" alt="Imagen de {{ suscripcion.plan.nombre }}" style="width: 100%; height: 80px; object-fit: cover; border-radius: var(--radius); margin-bottom: 0.75rem;">
+          {% else %}
+            <div style="width: 100%; height: 80px; background-color: var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center;">
+              <span style="color: var(--text-light); font-weight: 500; font-size: 0.9rem;">Sin imagen</span>
+            </div>
+          {% endif %}
+          <h4 class="plan-title" style="font-size: 1rem; margin-bottom: 0.25rem;">{{ suscripcion.plan.nombre }}</h4>
+          <p class="plan-type" style="font-size: 0.85rem;">{{ suscripcion.plan.get_tipo_plan_display }}</p>
+        </a>
+      {% empty %}
+        <p class="empty-state">Aún no estás en ningún plan financiero.</p>
+      {% endfor %}
+    </section>
+
+    <!-- Invitaciones Pendientes -->
+    <h3 class="section-title">Invitaciones Pendientes</h3>
+    <section class="invites-section">
+      {% for i in invitaciones_pendientes %}
+        <div class="invite-card">
+          <div class="invite-text">
+            <p><strong>{{ i.invitador.username }}</strong> te invitó al plan financiero <strong>{{ i.plan.nombre }}</strong></p>
+          </div>
+          <div class="invite-actions">
+            <form method="post" action="{% url 'aceptar_invitacion' i.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success">Aceptar</button>
+            </form>
+            <form method="post" action="{% url 'rechazar_invitacion' i.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Rechazar</button>
+            </form>
+          </div>
+        </div>
+      {% empty %}
+        <p class="empty-state">No tienes invitaciones pendientes.</p>
+      {% endfor %}
+    </section>
+  </main>
+
+  <script>
+    // Simulación opcional para datos dinámicos (no afecta la funcionalidad Django)
+    document.addEventListener('DOMContentLoaded', function() {
+      // El nombre de usuario ya se renderiza con Django, pero esto es para fallback
+      const userNameElement = document.querySelector('.welcome-section h2');
+      if (userNameElement && !userNameElement.textContent.includes('¡Hola,')) {
+        userNameElement.textContent = '¡Hola, Usuario Demo!';
+      }
+    });
+  </script>
 </body>
 </html>

@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Registro - EcoSmart</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
       {%load static%}
   <link rel="stylesheet" href="{% static 'Auth/registro.css'%}">
   
@@ -15,7 +12,7 @@
 <body>
   <main class="registro">
     <h2>Registro</h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
                 {% for campo in registerForm %}
                     <div>
@@ -25,7 +22,7 @@
                         {{ campo }} <br>
                     </div>
             {% endfor %}            {%for field,error in errores.items%}
-              {{field}}:{{error}} 
+              {{field}}:{{error}}
             {% endfor %}
         <button type="submit">Registrarse</button>
     </form>
