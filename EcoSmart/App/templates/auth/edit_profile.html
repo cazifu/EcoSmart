@@ -5,91 +5,215 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil | EcoSmart</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'auth/registro.css' %}">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
-            Editar Perfil
-        </h1>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">EcoSmart</div>
+                </div>
+                <div class="user-info">
+                    <div class="user-menu">
+                        <div class="user-display" onclick="toggleDropdown()">
+                            {% if request.user.profile.profile_picture %}
+                                <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                            {% endif %}
+                            <span class="user-name">{{ request.user.username }}</span>
+                            <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 10L12 15L17 10H7Z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <div class="dropdown-menu" id="user-dropdown">
+                            <a href="{% url 'edit_profile' %}" class="dropdown-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
+                                    <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10218 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Editar perfil
+                            </a>
+                            <form method="post" action="{% url 'logout' %}" id="logout-form">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
+                                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-        <!-- Sección de Mensajes -->
+    <main class="container">
+        <!-- Profile Picture Section -->
+        <section class="profile-picture-section fade-in-up">
+            <div class="profile-picture-container">
+                {% if request.user.profile.profile_picture %}
+                    <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de perfil de {{ request.user.username }}" class="profile-picture-large">
+                {% else %}
+                    <div class="profile-picture-large profile-picture-placeholder">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <h2 class="profile-username">{{ request.user.username }}</h2>
+        </section>
+
+        <!-- Messages Section -->
         {% if messages %}
-            <div class="mb-4">
+            <section class="messages-section fade-in-up">
                 {% for message in messages %}
-                <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                <div class="message {% if message.tags == 'success' %}message-success{% elif message.tags == 'error' %}message-error{% else %}message-info{% endif %}">
                     {{ message }}
                 </div>
                 {% endfor %}
-            </div>
+            </section>
         {% endif %}
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Editar Información del Perfil -->
-            <div class="bg-white p-6 rounded-xl shadow-2xl h-fit">
-                <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Información del Perfil</h2>
+        <!-- Profile Forms -->
+        <div class="profile-forms-container">
+            <!-- Profile Information Form -->
+            <section class="profile-form-section fade-in-up">
+                <div class="form-card">
+                    <h3 class="form-title">Información del Perfil</h3>
+                    <form method="post" enctype="multipart/form-data" class="profile-form">
+                        {% csrf_token %}
 
-                <form method="post" enctype="multipart/form-data" class="space-y-4">
-                    {% csrf_token %}
-
-                    {% for field in profile_form %}
-                        <div class="field-wrapper">
-                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                            {% if field.name == 'profile_picture' %}
-                                {% if request.user.profile.profile_picture %}
-                                    <div class="mb-2">
-                                        <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto actual" class="w-20 h-20 rounded-full object-cover border-2 border-gray-300">
+                        {% for field in profile_form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {% if field.name == 'profile_picture' %}
+                                    <div class="file-upload-area">
+                                        <div class="file-upload-icon">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H8V16H16V18ZM16 14H8V12H16V14ZM13 9V3.5L18.5 9H13Z" fill="currentColor"/>
+                                            </svg>
+                                        </div>
+                                        <div class="file-upload-text">
+                                            <span>Haz clic para seleccionar una imagen</span>
+                                            <small>PNG, JPG hasta 5MB</small>
+                                        </div>
                                     </div>
-                                {% else %}
-                                    <p class="text-gray-500 text-sm mb-2">No tienes foto de perfil actualmente.</p>
                                 {% endif %}
-                            {% endif %}
-                            {{ field }}
-                            {% if field.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="field-errors">
+                                        {% for error in field.errors %}
+                                            <span class="error-text">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
 
-                    <button type="submit" name="update_profile" class="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-blue-700 transition duration-150 shadow-lg">
-                        Actualizar Perfil
-                    </button>
-                </form>
-            </div>
+                        <button type="submit" name="update_profile" class="btn btn-primary btn-full">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
+                                <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
+                            </svg>
+                            Actualizar Perfil
+                        </button>
+                    </form>
+                </div>
+            </section>
 
-            <!-- Cambiar Contraseña -->
-            <div class="bg-white p-6 rounded-xl shadow-2xl h-fit">
-                <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Cambiar Contraseña</h2>
+            <!-- Password Change Form -->
+            <section class="profile-form-section fade-in-up">
+                <div class="form-card">
+                    <h3 class="form-title">Cambiar Contraseña</h3>
+                    <form method="post" class="profile-form">
+                        {% csrf_token %}
 
-                <form method="post" class="space-y-4">
-                    {% csrf_token %}
+                        {% for field in password_form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="field-errors">
+                                        {% for error in field.errors %}
+                                            <span class="error-text">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
 
-                    {% for field in password_form %}
-                        <div class="field-wrapper">
-                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-
-                    <button type="submit" name="change_password" class="w-full bg-red-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-red-700 transition duration-150 shadow-lg">
-                        Cambiar Contraseña
-                    </button>
-                </form>
-            </div>
+                        <button type="submit" name="change_password" class="btn btn-danger btn-full">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
+                                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9M19 9H14V4H5V21H19V9Z" fill="currentColor"/>
+                            </svg>
+                            Cambiar Contraseña
+                        </button>
+                    </form>
+                </div>
+            </section>
         </div>
 
-        <div class="mt-8 text-center">
-            <a href="{% url 'Dashboard' %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-                    <path d="m15 18-6-6 6-6"/>
+        <!-- Back to Dashboard -->
+        <section class="back-section fade-in-up">
+            <a href="{% url 'Dashboard' %}" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
+                    <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 Volver al Dashboard
             </a>
-        </div>
-    </div>
+        </section>
+    </main>
+
+    <script>
+        // Dropdown toggle function
+        function toggleDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Enhanced profile interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loading states for forms
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.classList.add('loading');
+                        submitBtn.innerHTML = '<div style="display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div>Procesando...';
+                    }
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const userMenu = document.querySelector('.user-menu');
+                const dropdown = document.getElementById('user-dropdown');
+                if (!userMenu.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        });
+
+        // Add spin animation for loading
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
