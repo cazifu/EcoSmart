@@ -2,9 +2,8 @@ services:
   - type: web
     name: ecosmart
     runtime: python3
-    rootDir: EcoSmart
-    buildCommand: pip install -r ../requirements.txt && python manage.py collectstatic --noinput --clear
-    startCommand: gunicorn EcoSmart.wsgi:application --bind 0.0.0.0:$PORT
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd EcoSmart && python manage.py collectstatic --noinput --clear && gunicorn EcoSmart.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DEBUG
         value: false
