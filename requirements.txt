@@ -1,0 +1,8 @@
+Django==5.2.4
+python-dotenv
+mistralai
+Pillow
+gunicorn
+psycopg2-binary
+dj-database-url
+whitenoise

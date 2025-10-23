@@ -1,0 +1,171 @@
+/* VARIABLES */
+:root {
+  --primary: #a855f7;
+  --primary-dark: #1d4ed8;
+  --secondary: #1e40af;
+  --text: #1e293b;
+  --text-light: #6b7280;
+  --radius: 16px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --transition: 0.3s ease;
+}
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* BODY */
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: var(--text);
+  position: relative; /* 👈 necesario para colocar elementos fijos */
+}
+
+/* BOTÓN VOLVER - fuera del contenedor */
+.btn-volver {
+  position: fixed; /* 👈 se mantiene fijo al borde de la pantalla */
+  top: 20px;
+  left: 25px;
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 22px;
+  border-radius: 30px;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(74, 0, 224, 0.5);
+  transition: all var(--transition);
+  z-index: 1000; /* 👈 asegura que quede encima del formulario */
+}
+
+.btn-volver:hover {
+  background: linear-gradient(135deg, #4a00e0, #8e2de2);
+  transform: translateY(-3px);
+}
+
+/* TÍTULO */
+h1 {
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  margin-bottom: 2.5rem;
+  color: var(--text);
+  text-align: center;
+  position: relative;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 2px;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.crear-plan-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 450px;
+  text-align: center;
+  border: 2px solid var(--primary);
+  transition: all var(--transition);
+}
+
+.crear-plan-container:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.3);
+}
+
+/* FORMULARIO */
+.crear-plan-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+form p {
+  font-size: 1em;
+  color: var(--text-light);
+}
+
+/* CAMPOS */
+.field-wrapper label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.crear-plan-container input,
+.crear-plan-container select,
+.crear-plan-container textarea {
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.8);
+  outline: none;
+  transition: all var(--transition);
+  width: 100%;
+}
+.crear-plan-container textarea {
+  resize: none;
+  height: 120px; /* opcional */
+}
+
+
+.crear-plan-container input:focus,
+.crear-plan-container select:focus,
+.crear-plan-container textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15);
+  background: #fff;
+}
+
+/* BOTÓN CREAR */
+.btn-crear {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem 0;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-crear:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+  box-shadow: var(--shadow-lg);
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .crear-plan-container {
+    width: 100%;
+    padding: 2rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
