@@ -1,1 +1,1 @@
-web: gunicorn EcoSmart.EcoSmart.wsgi:application --bind 0.0.0.0:$PORT
+web: cd EcoSmart && gunicorn EcoSmart.wsgi:application --bind 0.0.0.0:$PORT
