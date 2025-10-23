@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Mis Planes</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'menu_principal/mis_planes.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- JavaScript -->
+    <script src="{% static 'dashboard/dashboard.js' %}"></script>
+</head>
+<body>
+
+    <main>
+        <!-- Header -->
+        <header class="navbar">
+            <div class="nav-container flex items-center">
+                <div class="logo flex-1 ml-4">
+                    <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
+                        <i class="fas fa-leaf"></i>
+                        EcoSmart
+                    </a>
+                </div>
+
+                <!-- Top Navigation Menu -->
+                <nav class="flex items-center space-x-1 mr-4 overflow-x-auto">
+                    <a href="{% url 'Mis_Planes' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-purple-100 text-purple-700 border border-purple-300">
+                        <i class="fas fa-list mr-2"></i>
+                        Mis Planes
+                    </a>
+
+                    <a href="{% url 'crear_plan' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Plan
+                    </a>
+
+                    <a href="{% url 'invitaciones' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Invitaciones{% if invitaciones_pendientes %} ({{ invitaciones_pendientes|length }}){% endif %}
+                    </a>
+                </nav>
+
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+                        {% if request.user.profile.profile_picture %}
+                            <img class="w-8 h-8 rounded-full object-cover border-2 border-gray-300" src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
+                                <i class="fas fa-user text-gray-600"></i>
+                            </div>
+                        {% endif %}
+                        <span class="hidden md:block text-sm font-medium">{{ request.user.username }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 hidden">
+                        <a href="{% url 'edit_profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-cog mr-3"></i>
+                            Ajustes de Perfil
+                        </a>
+                        <div class="border-t border-gray-200"></div>
+                        <form method="POST" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                Cerrar Sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contenido de Mis Planes -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4"> Mis Planes Financieros</h1>
+                    
+                </div>
+            </div>
+            
+
+            <!-- Carrusel de planes -->
+            {% if mis_planes %}
+            <div class="planes-carousel-container">
+                <div class="planes-carousel">
+                    {% for suscripcion in mis_planes %}
+                    <div class="plan-card">
+                        <div class="plan-card-header">
+                            {% if suscripcion.plan.imagen %}
+                                <img src="{{ suscripcion.plan.imagen.url }}" alt="{{ suscripcion.plan.nombre }}" class="plan-image">
+                            {% else %}
+                                <div class="plan-image-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                            {% endif %}
+                            <div class="plan-badges">
+                                <span class="badge tipo-plan badge-{{ suscripcion.plan.tipo_plan }}">
+                                    {% if suscripcion.plan.tipo_plan == 'individual' %}
+                                        <i class="fas fa-user"></i>
+                                    {% else %}
+                                        <i class="fas fa-users"></i>
+                                    {% endif %}
+                                    {{ suscripcion.plan.get_tipo_plan_display }}
+                                </span>
+                                <span class="badge rol-badge badge-{{ suscripcion.rol }}">
+                                    {% if suscripcion.rol == 'admin' %}
+                                        <i class="fas fa-crown"></i>
+                                    {% else %}
+                                        <i class="fas fa-user-check"></i>
+                                    {% endif %}
+                                    {{ suscripcion.get_rol_display }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="plan-card-body">
+                            <h3 class="plan-title">{{ suscripcion.plan.nombre }}</h3>
+                            <p class="plan-description">{{ suscripcion.plan.descripcion|truncatewords:30 }}</p>
+
+                            <div class="plan-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Creado: {{ suscripcion.plan.fecha_creacion|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="plan-card-footer">
+                            <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="btn-plan-view">
+                                <i class="fas fa-eye"></i>
+                                Ver Plan
+                            </a>
+                            {% if suscripcion.rol == 'admin' %}
+                            <div class="plan-actions">
+                                <a href="{% url 'editar_plan' suscripcion.plan.id %}" class="btn-plan-action btn-edit" title="Editar Plan">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn-plan-action btn-delete" title="Eliminar Plan" data-plan-id="{{ suscripcion.plan.id }}" data-plan-name="{{ suscripcion.plan.nombre }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Controles del carrusel -->
+                <button class="carousel-control carousel-prev" id="prevBtn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-control carousel-next" id="nextBtn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- Indicadores -->
+                <div class="carousel-indicators" id="indicators"></div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>No tienes planes financieros</h3>
+                <p>Comienza creando tu primer plan financiero para organizar tus finanzas</p>
+                <a href="{% url 'crear_plan' %}" class="btn-create-first">
+                    <i class="fas fa-plus"></i>
+                    Crear Mi Primer Plan
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+    <!-- JavaScript para funcionalidad -->
+    <script>
+        // User dropdown menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+
+            if (userMenuButton && userDropdown) {
+                // Toggle dropdown on button click
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+
+                // Close dropdown on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- JavaScript para funcionalidad del carrusel -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.planes-carousel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicatorsContainer = document.getElementById('indicators');
+
+            if (!carousel || !prevBtn || !nextBtn) return;
+
+            const cards = carousel.children;
+            const totalCards = cards.length;
+            let currentIndex = 0;
+
+            // Crear indicadores
+            for (let i = 0; i < totalCards; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator' + (i === 0 ? ' active' : '');
+                indicator.addEventListener('click', () => goToSlide(i));
+                indicatorsContainer.appendChild(indicator);
+            }
+
+            const indicators = document.querySelectorAll('.indicator');
+
+            function updateCarousel() {
+                const cardWidth = 320 + 32; // card width + gap
+                carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+
+                // Actualizar indicadores
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentIndex);
+                });
+            }
+
+            function goToSlide(index) {
+                currentIndex = Math.max(0, Math.min(index, totalCards - 1));
+                updateCarousel();
+            }
+
+            function nextSlide() {
+                if (currentIndex < totalCards - 1) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            }
+
+            function prevSlide() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            }
+
+            // Event listeners
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            // Navegación con teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                if (e.key === 'ArrowRight') nextSlide();
+            });
+
+            // Actualizar estado inicial
+            updateCarousel();
+        });
+
+        // Funcionalidad para botones de editar y eliminar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Botones de eliminar plan
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const planId = this.getAttribute('data-plan-id');
+                    const planName = this.getAttribute('data-plan-name');
+
+                    if (confirm(`¿Estás seguro de que quieres eliminar el plan "${planName}"? Esta acción no se puede deshacer.`)) {
+                        // Crear formulario para enviar POST request
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/planes/${planId}/editar/`;  // URL correcta para editar_plan
+
+                        // Agregar campo delete_plan para indicar eliminación
+                        const deleteInput = document.createElement('input');
+                        deleteInput.type = 'hidden';
+                        deleteInput.name = 'delete_plan';
+                        deleteInput.value = 'true';
+                        form.appendChild(deleteInput);
+
+                        // Agregar CSRF token
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                        if (csrfToken) {
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = 'csrfmiddlewaretoken';
+                            csrfInput.value = csrfToken.value;
+                            form.appendChild(csrfInput);
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

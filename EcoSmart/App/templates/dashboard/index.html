@@ -3,259 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EcoSmart - Dashboard</title>
+  <title>EcoSmart Finanzas - Dashboard</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/dashboard-modern.css' %}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- JavaScript -->
+  <script src="{% static 'dashboard/dashboard.js' %}"></script>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <div class="logo">
-          <div class="logo-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="logo-text">EcoSmart</div>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
+          <i class="fas fa-leaf"></i>
+          EcoSmart
+        </a>
+      </div>
+
+      <div class="user-menu-container">
+        <div class="user-avatar">
+          {% if request.user.profile.profile_picture %}
+            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de perfil" class="avatar-img">
+          {% else %}
+            <div class="avatar-placeholder">
+              <i class="fas fa-user"></i>
+            </div>
+          {% endif %}
         </div>
-        <div class="user-info">
-          <div class="user-menu">
-            <div class="user-display" onclick="toggleDropdown()">
-              {% if request.user.profile.profile_picture %}
-                <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-              {% else %}
-                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-              {% endif %}
-              <span class="user-name">{{ request.user.username }}</span>
-              <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 10L12 15L17 10H7Z" fill="currentColor"/>
-              </svg>
-            </div>
-            <div class="dropdown-menu" id="user-dropdown">
-              <a href="{% url 'edit_profile' %}" class="dropdown-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
-                  <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10218 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Editar perfil
-              </a>
-              <form method="post" action="{% url 'logout' %}" id="logout-form">
-                {% csrf_token %}
-                <button type="submit" class="dropdown-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
-                    <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  Cerrar sesión
-                </button>
-              </form>
-            </div>
+        <div class="user-dropdown">
+          <div class="user-info">
+            <div class="user-name">{{ request.user.username }}</div>
+            <div class="user-email">{{ request.user.email }}</div>
           </div>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'Mis_Planes' %}" class="dropdown-item">
+            <span class="dropdown-icon">📋</span>
+            Mis Planes
+          </a>
+          <a href="{% url 'crear_plan' %}" class="dropdown-item">
+            <span class="dropdown-icon">➕</span>
+            Crear Plan
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'edit_profile' %}" class="dropdown-item">
+            <span class="dropdown-icon">👤</span>
+            Editar Perfil
+          </a>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="dropdown-item">
+              <span class="dropdown-icon">🚪</span>
+              Cerrar Sesión
+            </button>
+          </form>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <!-- Bienvenida -->
-    <section class="welcome-section fade-in-up">
-      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+  <!-- Dashboard Principal -->
+  <div class="dashboard-container">
+    <!-- Header de Bienvenida -->
+    <div class="welcome-header">
+      <div class="welcome-content">
+        <h1 class="welcome-title">¡Hola, {{ request.user.username }}!</h1>
+        <p class="welcome-subtitle">Bienvenido a EcoSmart, tu asistente financiero personal</p>
+      </div>
+    </div>
 
-           </section>
-
-    <!-- Acciones principales -->
-    <div class="dashboard-grid" style="justify-content: center; display: flex;">
-      <div class="card fade-in-up" style="max-width: 400px; margin: 0 auto;">
-        <div class="card-header">
-          <div class="card-icon primary">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Crear un Nuevo Plan Financiero</h3>
+    <!-- Grid de Acciones Principales -->
+    <div class="actions-grid">
+      <div class="action-card primary">
+        <div class="action-icon">
+          <i class="fas fa-rocket"></i>
+          <i class="fas fa-plus card-icon-overlay"></i>
         </div>
-        <a href="{% url 'crear_plan' %}" class="btn btn-primary" style="display: inline-block; text-align: center; text-decoration: none;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
-            <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
-          </svg>
-          Crear Plan
+        <div class="action-content">
+          <h3>Crear Plan</h3>
+          <p>Comienza un nuevo plan financiero</p>
+        </div>
+        <a href="{% url 'crear_plan' %}" class="action-link">
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="action-card secondary">
+        <div class="action-icon">
+          <i class="fas fa-chart-line"></i>
+          <i class="fas fa-folder-open card-icon-overlay"></i>
+        </div>
+        <div class="action-content">
+          <h3>Mis Planes</h3>
+          <p>Gestiona tus planes existentes</p>
+        </div>
+        <a href="{% url 'Mis_Planes' %}" class="action-link">
+          <i class="fas fa-arrow-right"></i>
         </a>
       </div>
     </div>
 
-    <!-- Mis Planes -->
-    <h3 class="section-title fade-in-up" style="display: flex; align-items: center; gap: 0.75rem;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary);">
-        <path d="M19 7H18V6C18 4.9 17.1 4 16 4H8C6.9 4 6 4.9 6 6V7H5C3.9 7 3 7.9 3 9V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9C21 7.9 20.1 7 19 7ZM16 7H8V6H16V7Z" fill="currentColor"/>
-      </svg>
-      Mis Planes Financieros
-    </h3>
-    <section class="plans-section fade-in-up">
-      <div class="plans-carousel">
-        {% for suscripcion in mis_planes %}
-          <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card-large">
-            {% if suscripcion.plan.imagen %}
-              <img src="{{ suscripcion.plan.imagen.url }}" alt="Imagen de {{ suscripcion.plan.nombre }}" class="plan-image">
-            {% else %}
-              <div class="plan-image-placeholder">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--text-light);">
-                  <path d="M19 7H18V6C18 4.9 17.1 4 16 4H8C6.9 4 6 4.9 6 6V7H5C3.9 7 3 7.9 3 9V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9C21 7.9 20.1 7 19 7ZM16 7H8V6H16V7Z" fill="currentColor"/>
-                </svg>
-              </div>
-            {% endif %}
-            <div class="plan-content">
-              <h4 class="plan-title-large">{{ suscripcion.plan.nombre }}</h4>
-              <p class="plan-type-large">{{ suscripcion.plan.get_tipo_plan_display }}</p>
-              <div class="plan-description">
-                <p>{{ suscripcion.plan.descripcion|truncatechars:120 }}</p>
-              </div>
-            </div>
-          </a>
-        {% empty %}
-        <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--text-light); margin-bottom: 1rem;">
-            <path d="M19 7H18V6C18 4.9 17.1 4 16 4H8C6.9 4 6 4.9 6 6V7H5C3.9 7 3 7.9 3 9V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9C21 7.9 20.1 7 19 7ZM16 7H8V6H16V7Z" fill="currentColor"/>
-          </svg>
-          <p style="margin-bottom: 1rem;">Aún no estás en ningún plan financiero.</p>
-          <a href="{% url 'crear_plan' %}" class="btn btn-primary" style="display: inline-block;">Crear tu primer plan</a>
+    <!-- Sección de Consejo -->
+    <div class="tip-section">
+      <div class="tip-content">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">
+          <h3>Consejo del día</h3>
+          <p>"El ahorro es la base de la libertad financiera. Comienza con pequeños pasos y verás grandes resultados."</p>
         </div>
-      {% endfor %}
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <!-- Invitaciones Pendientes -->
-    <h3 class="section-title fade-in-up" style="display: flex; align-items: center; gap: 0.75rem;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary);">
-        <path d="M21 19V17H19V19H17V21H19V23H21V21H23V19H21ZM17 7C17 5.9 16.1 5 15 5H11V7H15V9.08C14.39 9.21 13.8 9.43 13.25 9.74L11.97 8.46L10.55 9.88L11.83 11.16C11.52 11.71 11.3 12.3 11.17 12.91H9V15H11.17C11.3 15.7 11.52 16.29 11.83 16.84L10.55 18.12L11.97 19.54L13.25 18.26C13.8 18.57 14.39 18.79 15 18.92V21H17V18.92C17.61 18.79 18.2 18.57 18.75 18.26L20.03 19.54L21.45 18.12L20.17 16.84C20.48 16.29 20.7 15.7 20.83 15H23V12.91H20.83C20.7 12.3 20.48 11.71 20.17 11.16L21.45 9.88L20.03 8.46L18.75 9.74C18.2 9.43 17.61 9.21 17 9.08V7ZM15 11C15.55 11 16 11.45 16 12S15.55 13 15 13 14 12.55 14 12 14.45 11 15 11Z" fill="currentColor"/>
-      </svg>
-      Invitaciones Pendientes
-      {% if invitaciones_pendientes %}
-        <span class="pulse" style="background-color: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">{{ invitaciones_pendientes|length }}</span>
-      {% endif %}
-    </h3>
-    <section class="invites-section fade-in-up">
-      {% for i in invitaciones_pendientes %}
-        <div class="invite-card">
-          <div class="invite-text" style="display: flex; align-items: center; gap: 0.75rem;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--primary); flex-shrink: 0;">
-              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9M19 9H14V4H5V21H19V9Z" fill="currentColor"/>
-            </svg>
-            <p><strong>{{ i.invitador.username }}</strong> te invitó al plan financiero <strong>{{ i.plan.nombre }}</strong></p>
-          </div>
-          <div class="invite-actions">
-            <form method="post" action="{% url 'aceptar_invitacion' i.id %}" style="display: inline;" id="accept-form-{{ i.id }}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
-                  <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
-                </svg>
-                Aceptar
-              </button>
-            </form>
-            <form method="post" action="{% url 'rechazar_invitacion' i.id %}" style="display: inline;" id="reject-form-{{ i.id }}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z" fill="currentColor"/>
-                </svg>
-                Rechazar
-              </button>
-            </form>
-          </div>
-        </div>
-      {% empty %}
-        <div class="empty-state" style="text-align: center; padding: 2rem 1rem;">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--text-light); margin-bottom: 1rem;">
-            <path d="M21 19V17H19V19H17V21H19V23H21V21H23V19H21ZM17 7C17 5.9 16.1 5 15 5H11V7H15V9.08C14.39 9.21 13.8 9.43 13.25 9.74L11.97 8.46L10.55 9.88L11.83 11.16C11.52 11.71 11.3 12.3 11.17 12.91H9V15H11.17C11.3 15.7 11.52 16.29 11.83 16.84L10.55 18.12L11.97 19.54L13.25 18.26C13.8 18.57 14.39 18.79 15 18.92V21H17V18.92C17.61 18.79 18.2 18.57 18.75 18.26L20.03 19.54L21.45 18.12L20.17 16.84C20.48 16.29 20.7 15.7 20.83 15H23V12.91H20.83C20.7 12.3 20.48 11.71 20.17 11.16L21.45 9.88L20.03 8.46L18.75 9.74C18.2 9.43 17.61 9.21 17 9.08V7ZM15 11C15.55 11 16 11.45 16 12S15.55 13 15 13 14 12.55 14 12 14.45 11 15 11Z" fill="currentColor"/>
-          </svg>
-          <p>No tienes invitaciones pendientes.</p>
-        </div>
-      {% endfor %}
-    </section>
-  </main>
 
-  <script>
-    // Dropdown toggle function
-    function toggleDropdown() {
-      const dropdown = document.getElementById('user-dropdown');
-      dropdown.classList.toggle('show');
-    }
-
-    // Enhanced dashboard interactions
-    document.addEventListener('DOMContentLoaded', function() {
-      // Loading states for forms
-      const forms = document.querySelectorAll('form');
-      forms.forEach(form => {
-        form.addEventListener('submit', function() {
-          const submitBtn = form.querySelector('button[type="submit"]');
-          if (submitBtn) {
-            submitBtn.classList.add('loading');
-            submitBtn.innerHTML = '<div style="display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div>Procesando...';
-          }
-        });
-      });
-
-      // Smooth scroll for anchor links
-      const anchorLinks = document.querySelectorAll('a[href^="#"]');
-      anchorLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
-      });
-
-      // Add fade-in animation delay for staggered effect
-      const fadeElements = document.querySelectorAll('.fade-in-up');
-      fadeElements.forEach((element, index) => {
-        element.style.animationDelay = `${index * 0.1}s`;
-      });
-
-      // Enhanced card hover effects
-      const cards = document.querySelectorAll('.card, .plan-card, .invite-card');
-      cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-          this.style.transform = 'translateY(-8px) scale(1.02)';
-        });
-        card.addEventListener('mouseleave', function() {
-          this.style.transform = 'translateY(0) scale(1)';
-        });
-      });
-
-      // Notification badge animation
-      const notificationBadge = document.querySelector('.pulse');
-      if (notificationBadge) {
-        setInterval(() => {
-          notificationBadge.style.transform = 'scale(1.1)';
-          setTimeout(() => {
-            notificationBadge.style.transform = 'scale(1)';
-          }, 200);
-        }, 3000);
-      }
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', function(event) {
-        const userMenu = document.querySelector('.user-menu');
-        const dropdown = document.getElementById('user-dropdown');
-        if (!userMenu.contains(event.target)) {
-          dropdown.classList.remove('show');
-        }
-      });
-    });
-
-    // Add spin animation for loading
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
-  </script>
 </body>
 </html>

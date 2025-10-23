@@ -1,50 +1,84 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'dashboard/index.html' %}
+{% load static %}
 
-  {%load static%}
-  <link rel="stylesheet" href="{% static 'menu_principal/style.css'%}">
-  <link rel="stylesheet" href="{% static 'menu_principal/menu_inferior.css'%}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
-  <title>EcoSmart</title>
-</head>
-<body>
+{% block title %}Inicio{% endblock %}
 
-  <!-- Header -->
-  <header>
-    <h1>EcoSmart</h1>
-  </header>
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">🏠 Inicio</h1>
+            <p class="lead">Bienvenido a tu panel de control financiero</p>
+        </div>
+    </div>
+    
+    <!-- Resumen rápido -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-wallet fa-3x text-primary mb-3"></i>
+                    <h5>Planes Activos</h5>
+                    <h3 class="text-primary">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                    <h5>Objetivos Completados</h5>
+                    <h3 class="text-success">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks fa-3x text-warning mb-3"></i>
+                    <h5>Tareas Pendientes</h5>
+                    <h3 class="text-warning">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!-- Pantalla Principal -->
-  <main id="pantalla-principal">
-    <section class="resumen">
-      <div class="resumen-box">
-        <p>Capital</p>
-        <h2>$100,000.00</h2>
-      </div>
-      <div class="resumen-box">
-        <p>A Deber</p>
-        <h2>$0.00</h2>
-      </div>
-      <div class="resumen-box">
-        <p>Balance</p>
-        <h2>$100,000.00</h2>
-      </div>
-    </section>
+    <!-- Acciones rápidas -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>🚀 Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'crear_plan' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Crear Nuevo Plan
+                        </a>
+                        <a href="{% url 'transacciones' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-exchange-alt"></i> Ver Transacciones
+                        </a>
+                        <a href="{% url 'Estadisticas' %}" class="btn btn-outline-success">
+                            <i class="fas fa-chart-bar"></i> Ver Estadísticas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📋 Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>No hay actividad reciente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-    <section class="cuentas">
-      <h3>Cuentas</h3>
-      <ul>
-        <li>Efectivo: $0.00</li>
-        <li>Cuenta Banco: $0.00</li>
-        <li>MasterCard: $100,000.00</li>
-      </ul>
-    </section>
-  </main>
-
-  {% include 'menu_principal/menu_inferior.html'%}
-
-</body>
-</html>
