@@ -10,7 +10,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS
-        value: ecosmart.onrender.com
+        value: *
       - key: DB_NAME
         fromDatabase: ecosmart-db
       - key: DB_USER
