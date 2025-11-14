@@ -9,13 +9,19 @@ from django.conf import settings
 
 @login_required
 def chatbot_view(request, plan_id):
-    plan = get_object_or_404(Plan, id=plan_id, creador=request.user)
+    plan = get_object_or_404(Plan, id=plan_id)
+    # Check if user is creator or member of the plan
+    if plan.creador != request.user and not plan.suscripcion.filter(usuario=request.user).exists():
+        return redirect('Dashboard')  # or some error page
     messages = Message.objects.filter(user=request.user, plan=plan).order_by('timestamp')
     return render(request, 'chatbot/chatbot.html', {'messages': messages, 'plan': plan})
 
 @login_required
 def send_message(request, plan_id):
-    plan = get_object_or_404(Plan, id=plan_id, creador=request.user)
+    plan = get_object_or_404(Plan, id=plan_id)
+    # Check if user is creator or member of the plan
+    if plan.creador != request.user and not plan.suscripcion.filter(usuario=request.user).exists():
+        return JsonResponse({'error': 'No tienes acceso a este plan'}, status=403)
     if request.method == 'POST':
         user_message = request.POST.get('message')
         if user_message:
@@ -75,7 +81,7 @@ def get_ai_response(message, plan, user):
                 {"role": "user", "content": message}
             ],
             temperature=0.7,
-            max_tokens=200
+            max_tokens=500
         )
 
         return response.choices[0].message.content
