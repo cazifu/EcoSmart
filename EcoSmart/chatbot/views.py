@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Message
 from Planes_app.models import Plan, Dinero, Ingreso, Gasto, Objetivo, Tarea
-from mistralai.client import MistralClient
+from mistralai import Mistral
 import os
 from django.conf import settings
 
@@ -40,7 +40,7 @@ def send_message(request, plan_id):
 def get_ai_response(message, plan, user):
     try:
         # Initialize Mistral client
-        client = MistralClient(api_key=settings.MISTRAL_API_KEY)
+        client = Mistral(api_key=settings.MISTRAL_API_KEY)
 
         # Get plan data for context
         plan_data = get_plan_context(plan)
@@ -74,7 +74,7 @@ def get_ai_response(message, plan, user):
         Si el usuario pregunta sobre sus finanzas específicas, usa los datos del plan para dar consejos relevantes."""
 
         # Create chat completion
-        response = client.chat(
+        response = client.chat.complete(
             model="mistral-tiny",
             messages=[
                 {"role": "system", "content": system_prompt},

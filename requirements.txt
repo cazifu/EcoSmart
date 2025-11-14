@@ -4,5 +4,5 @@ whitenoise==6.5.0
 dj-database-url==2.1.0
 psycopg2-binary==2.9.7
 gunicorn==21.2.0
-mistralai==1.0.1
+mistralai==0.4.0
 Pillow==10.0.0
