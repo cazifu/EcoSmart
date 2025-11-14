@@ -5,6 +5,7 @@
 {% block extra_head %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'objetivos/objetivos.css' %}">
+<script src="{% static 'js/number-formatter.js' %}"></script>
 <style>
     :root {
         --primary: #a855f7;
@@ -316,7 +317,6 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Columna de Registro (Formulario) -->
-        {% if es_admin %}
         <div class="lg:col-span-1">
             <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl shadow-lg h-fit">
                 <div class="flex items-center gap-3 mb-6">
@@ -402,10 +402,9 @@
                 </form>
             </div>
         </div>
-        {% endif %}
 
         <!-- Columna de Lista de Objetivos -->
-        <div class="{% if es_admin %}lg:col-span-2{% else %}lg:col-span-3{% endif %}">
+        <div class="lg:col-span-2">
             <!-- Toggle para mostrar objetivos completados -->
             <div class="mb-6 flex justify-end">
                 <form method="get" action="{% url 'objetivos' plan.id %}">
@@ -436,8 +435,9 @@
                                         <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
                                         Objetivo de Ahorro
                                     </span>
-                                    <span>Meta: ${{ objetivo.monto_necesario|floatformat:2 }}</span>
-                                    <span>Actual: ${{ objetivo.monto_actual|floatformat:2 }}</span>
+                                    <span>Meta: $<span class="format-currency">{{ objetivo.monto_necesario }}</span></span>
+                                    <span>Actual: $<span class="format-currency">{{ objetivo.monto_actual }}</span></span>
+                                    <span>Creado por: {{ objetivo.creador.username }}</span>
                                 </div>
                                 {% if objetivo.monto_necesario > 0 %}
                                     {% widthratio objetivo.monto_actual objetivo.monto_necesario 100 as porcentaje %}
@@ -488,7 +488,7 @@
                                     Completado
                                 </div>
                                 {% endif %}
-                                {% if es_admin %}
+                                {% if objetivo.creador == user %}
                                 <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}" class="delete-form"
                                       onsubmit="return confirm('¿Estás seguro de que quieres eliminar este objetivo? Esta acción no se puede deshacer.');">
                                     {% csrf_token %}

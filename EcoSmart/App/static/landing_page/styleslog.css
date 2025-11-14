@@ -141,9 +141,20 @@ body {
 /* ===============================
    ANIMACIONES
    =============================== */
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @keyframes pulseGlow {
   0%, 100% { text-shadow: 0 0 6px var(--violeta); }
-  50% { text-shadow: 0 0 12px var(--primary-light); }
+  50% { text-shadow: 0 0 12px var(--violeta); }
 }
 
 /* ===============================
@@ -240,6 +251,13 @@ body {
   }
 }
 
+
+/* BOTONES DEL NAVBAR */
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 
 /* BOTONES (Navbar y Hero iguales) */
 .btn-fill {
@@ -343,7 +361,11 @@ body {
   line-height: 1.6;
 }
 
-.hero .btn {
+.hero-buttons {
+  margin-top: 1rem;
+}
+
+.hero .btn-fill {
   background-color: var(--violeta);
   color: var(--blanco);
   padding: 0.9rem 2rem;
@@ -352,11 +374,13 @@ body {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
 }
 
-.hero .btn:hover {
+.hero .btn-fill:hover {
   background-color: #7e3ef0;
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(155, 89, 182, 0.4);

@@ -773,9 +773,12 @@ def historiales(request, plan_id):
 @login_required
 def objetivos(request, plan_id):
     """
-    Muestra la lista de objetivos del plan y el formulario para agregar uno nuevo (solo para admins).
+    Muestra la lista de objetivos del plan y el formulario para agregar uno nuevo (cualquier miembro puede crear).
     """
-    plan = get_object_or_404(Plan, pk=plan_id)
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('Dashboard')
 
     # Verificar si mostrar objetivos completados
     show_completed = request.GET.get('show_completed', 'no') == 'yes'
@@ -786,14 +789,12 @@ def objetivos(request, plan_id):
     else:
         objetivos_del_plan = Objetivo.objects.filter(plan=plan).exclude(estado='completado')
 
-    # Verificar si el usuario es admin o moderador
+    # Verificar si el usuario es admin
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
-    es_admin_real = (plan.creador == request.user or
-                     Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
 
-    # Formulario para agregar un nuevo objetivo (solo si es admin)
-    agregar_form = ObjetivoForm() if es_admin else None
+    # Cualquier miembro puede crear objetivos
+    agregar_form = ObjetivoForm()
 
     # Formulario para aportar dinero a un objetivo
     aportar_form = AportarObjetivoForm()
@@ -844,6 +845,7 @@ def objetivos(request, plan_id):
         'aportar_form': aportar_form,
         'show_completed': show_completed,
         'es_admin': es_admin,
+        'user': request.user,
     }
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'objetivos_partial.html', context)
@@ -852,20 +854,17 @@ def objetivos(request, plan_id):
 @login_required
 def agregar_objetivo(request, plan_id):
     """Maneja el formulario POST para agregar un nuevo objetivo."""
-    plan = get_object_or_404(Plan, pk=plan_id)
-
-    # Verificar si el usuario es admin o moderador del plan
-    es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
-    if not es_admin:
-        messages.error(request, 'Solo los administradores o moderadores pueden crear objetivos.')
-        return redirect('objetivos', plan_id=plan.id)
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('Dashboard')
 
     if request.method == 'POST':
         form = ObjetivoForm(request.POST, request.FILES)
         if form.is_valid():
             objetivo = form.save(commit=False)
             objetivo.plan = plan
+            objetivo.creador = request.user
             # Establecer monto_actual en 0 por defecto al crear
             if objetivo.monto_actual is None:
                 objetivo.monto_actual = 0
@@ -914,6 +913,15 @@ def eliminar_objetivo(request, plan_id, objetivo_id):
     if not es_miembro: return redirect('dashboard')
 
     objetivo = get_object_or_404(Objetivo, pk=objetivo_id, plan=plan)
+    
+    # Verificar permisos: solo el admin puede eliminar (temporalmente hasta migración)
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+    
+    if not es_admin:
+        messages.error(request, 'Solo el administrador puede eliminar objetivos.')
+        return redirect('objetivos', plan_id=plan.id)
+    
     dinero_obj = get_object_or_404(Dinero, plan=plan)
 
     if request.method == 'POST':

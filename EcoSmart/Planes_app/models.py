@@ -29,7 +29,7 @@ class Suscripcion(models.Model):
     ROL_CHOICES = [
         ('miembro', 'Miembro'),
         ('moderador', 'Moderador'),
-        ('admin', 'admin'),
+        ('admin', 'Admin'),
     ]
 
     # id_suscripcion (INTEGER - PK) -> Django lo crea automáticamente
@@ -129,6 +129,9 @@ class Objetivo(models.Model):
 
     # id_plan (FK a planes_plan)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='objetivos')
+
+    # Usuario que creó el objetivo
+    creador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='objetivos_creados')
 
     nombre = models.CharField(max_length=255)
     detalles = models.TextField(max_length=65535)

@@ -19,7 +19,7 @@
                 </svg>
                 <p class="text-sm font-medium text-indigo-700">Saldo Actual</p>
             </div>
-            <p class="text-4xl font-extrabold text-indigo-900">${{ dinero_info.total_dinero|floatformat:2 }}</p>
+            <p class="text-4xl font-extrabold text-indigo-900">$<span class="format-currency">{{ dinero_info.total_dinero }}</span></p>
         </div>
         <!-- Total Ingresos -->
         <div class="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-xl shadow-lg border border-green-200 hover:shadow-xl transition-shadow">
@@ -29,7 +29,7 @@
                 </svg>
                 <p class="text-sm font-medium text-green-700">Total Ingresos</p>
             </div>
-            <p class="text-4xl font-extrabold text-green-900">${{ dinero_info.ingreso_total|floatformat:2 }}</p>
+            <p class="text-4xl font-extrabold text-green-900">$<span class="format-currency">{{ dinero_info.ingreso_total }}</span></p>
         </div>
         <!-- Total Gastos -->
         <div class="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-xl shadow-lg border border-red-200 hover:shadow-xl transition-shadow">
@@ -39,7 +39,7 @@
                 </svg>
                 <p class="text-sm font-medium text-red-700">Total Gastos</p>
             </div>
-            <p class="text-4xl font-extrabold text-red-900">${{ dinero_info.gasto_total|floatformat:2 }}</p>
+            <p class="text-4xl font-extrabold text-red-900">$<span class="format-currency">{{ dinero_info.gasto_total }}</span></p>
         </div>
     </div>
 
@@ -58,7 +58,7 @@
                 {% for item in ingresos_por_tipo %}
                 <li class="flex justify-between items-center p-3 rounded-lg bg-green-50">
                     <span class="font-semibold text-gray-800">{{ item.tipo_ingreso }}</span>
-                    <span class="text-lg font-bold text-green-600">${{ item.total|floatformat:2 }}</span>
+                    <span class="text-lg font-bold text-green-600">$<span class="format-currency">{{ item.total }}</span></span>
                 </li>
                 {% endfor %}
             </ul>
@@ -79,7 +79,7 @@
                 {% for item in gastos_por_tipo %}
                 <li class="flex justify-between items-center p-3 rounded-lg bg-red-50">
                     <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}</span>
-                    <span class="text-lg font-bold text-red-600">${{ item.total|floatformat:2 }}</span>
+                    <span class="text-lg font-bold text-red-600">$<span class="format-currency">{{ item.total }}</span></span>
                 </li>
                 {% endfor %}
             </ul>
@@ -242,7 +242,7 @@
                 {% for item in ingresos_por_usuario %}
                 <li class="flex justify-between items-center p-3 rounded-lg bg-blue-50">
                     <span class="font-semibold text-gray-800">{{ item.user__username|default:"Usuario Desconocido" }}</span>
-                    <span class="text-lg font-bold text-blue-600">${{ item.total|floatformat:2 }}</span>
+                    <span class="text-lg font-bold text-blue-600">$<span class="format-currency">{{ item.total }}</span></span>
                 </li>
                 {% endfor %}
             </ul>
@@ -260,7 +260,7 @@
                 {% for item in gastos_por_usuario %}
                 <li class="flex justify-between items-center p-3 rounded-lg bg-orange-50">
                     <span class="font-semibold text-gray-800">{{ item.user__username|default:"Usuario Desconocido" }}</span>
-                    <span class="text-lg font-bold text-orange-600">${{ item.total|floatformat:2 }}</span>
+                    <span class="text-lg font-bold text-orange-600">$<span class="format-currency">{{ item.total }}</span></span>
                 </li>
                 {% endfor %}
             </ul>

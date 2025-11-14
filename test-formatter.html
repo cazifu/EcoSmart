@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Formateo de Números</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .number { font-weight: bold; color: #2563eb; }
+        .format-number { color: #059669; }
+    </style>
+</head>
+<body>
+    <h1>Prueba del Formateo de Números</h1>
+    
+    <div class="test-section">
+        <h2>Números sin formatear:</h2>
+        <p>Saldo: $<span class="number">1000000.50</span></p>
+        <p>Ingreso: $<span class="number">250000</span></p>
+        <p>Gasto: $<span class="number">75000.75</span></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Números con formateo automático (clase format-number):</h2>
+        <p>Mil: $<span class="format-number">1000</span></p>
+        <p>Diez mil: $<span class="format-number">10000</span></p>
+        <p>Cien mil: $<span class="format-number">100000</span></p>
+        <p>Un millón: $<span class="format-number">1000000</span></p>
+        <p>Con decimales: $<span class="format-number">1500.75</span></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Prueba manual:</h2>
+        <input type="number" id="testInput" placeholder="Ingresa un número" style="padding: 8px; margin-right: 10px;">
+        <button onclick="formatManual()" style="padding: 8px 16px;">Formatear</button>
+        <p>Resultado: <span id="result">-</span></p>
+    </div>
+
+    <script>
+        // Formateador de números para formato español (1.000.000,00)
+        class NumberFormatter {
+            constructor() {
+                this.formatter = new Intl.NumberFormat('es-ES', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            format(number) {
+                if (number === null || number === undefined || isNaN(number)) {
+                    return '0,00';
+                }
+                return this.formatter.format(parseFloat(number));
+            }
+
+            formatAllNumbers() {
+                const elements = document.querySelectorAll('.format-number');
+                elements.forEach(element => {
+                    const value = element.textContent.replace(/[$,\s]/g, '');
+                    if (!isNaN(value) && value !== '') {
+                        element.textContent = this.format(value);
+                    }
+                });
+            }
+        }
+
+        const numberFormatter = new NumberFormatter();
+
+        // Formatear automáticamente cuando carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            numberFormatter.formatAllNumbers();
+        });
+
+        // Función para prueba manual
+        function formatManual() {
+            const input = document.getElementById('testInput');
+            const result = document.getElementById('result');
+            const value = input.value;
+            
+            if (value) {
+                result.textContent = numberFormatter.format(value);
+            } else {
+                result.textContent = 'Ingresa un número válido';
+            }
+        }
+    </script>
+</body>
+</html>

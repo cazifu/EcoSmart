@@ -5,6 +5,7 @@
 {% block extra_head %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'gastos/gastos.css' %}">
+<script src="{% static 'js/number-formatter.js' %}"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
     :root {
@@ -216,9 +217,9 @@
                 <!-- Resumen Financiero Rápido -->
                 <div class="mb-6 bg-red-50 p-5 rounded-xl shadow-inner border border-red-200">
                     <p class="text-lg font-semibold text-gray-700">Saldo Actual del Plan:
-                        <span class="text-red-700 text-2xl ml-2 font-extrabold">${{ dinero_info.total_dinero|floatformat:2 }}</span>
+                        <span class="text-red-700 text-2xl ml-2 font-extrabold">$<span class="format-currency">{{ dinero_info.total_dinero }}</span></span>
                     </p>
-                    <p class="text-sm text-gray-500">Total Gastos Históricos: ${{ dinero_info.gasto_total|floatformat:2 }}</p>
+                    <p class="text-sm text-gray-500">Total Gastos Históricos: $<span class="format-currency">{{ dinero_info.gasto_total }}</span></p>
                 </div>
 
                 <!-- Lista de Gastos -->
@@ -243,7 +244,7 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <span class="text-2xl font-bold text-red-600">-${{ gasto.cantidad|floatformat:2 }}</span>
+                                        <span class="text-2xl font-bold text-red-600">-$<span class="format-currency">{{ gasto.cantidad }}</span></span>
                                         <form method="POST" action="{% url 'eliminar_gasto' plan_id=plan.id gasto_id=gasto.id %}"
                                               onsubmit="return confirm('¿Estás seguro de que quieres eliminar este gasto? Esta acción no se puede deshacer.');"
                                               class="inline">
@@ -281,7 +282,7 @@
                         {% for tipo in gastos_por_tipo %}
                         <div class="bg-red-50 p-4 rounded-lg border border-red-200">
                             <h3 class="font-semibold text-gray-900">{{ tipo.tipo_gasto|title }}</h3>
-                            <p class="text-2xl font-bold text-red-600 mt-1">${{ tipo.total|floatformat:2 }}</p>
+                            <p class="text-2xl font-bold text-red-600 mt-1">$<span class="format-currency">{{ tipo.total }}</span></p>
                         </div>
                         {% endfor %}
                     </div>

@@ -1,6 +1,5 @@
 {% extends 'base_plan.html' %}
 {% load static %}
-
 {% block title %}Historiales - {{ plan.nombre }}{% endblock %}
 
 {% block extra_head %}
@@ -166,7 +165,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-xl font-extrabold text-green-600">+ ${{ ingreso.cantidad|floatformat:2 }}</p>
+                            <p class="text-xl font-extrabold text-green-600">+ $<span class="format-currency">{{ ingreso.cantidad }}</span></p>
                             <p class="text-xs text-gray-400 mt-1">Guardado: {{ ingreso.fecha_guardado|date:"d/m/Y H:i" }}</p>
                         </div>
                     </li>
@@ -193,7 +192,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-xl font-extrabold text-red-600">- ${{ gasto.cantidad|floatformat:2 }}</p>
+                            <p class="text-xl font-extrabold text-red-600">- $<span class="format-currency">{{ gasto.cantidad }}</span></p>
                             <p class="text-xs text-gray-400 mt-1">Guardado: {{ gasto.fecha_guardado|date:"d/m/Y H:i" }}</p>
                         </div>
                     </li>
