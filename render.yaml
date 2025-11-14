@@ -2,7 +2,7 @@ services:
   - type: web
     name: ecosmart
     runtime: python3
-    buildCommand: cd EcoSmart && pip install -r requirements.txt
+    buildCommand: cd EcoSmart && pip install -e . && pip install -r requirements.txt
     startCommand: cd EcoSmart && python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && gunicorn EcoSmart.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DEBUG
